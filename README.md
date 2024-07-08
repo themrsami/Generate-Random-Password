@@ -36,7 +36,7 @@ Follow these instructions to set up and run the Password Generator on your local
     ```
 2. Navigate to the project directory:
     ```bash
-    cd password-generator
+    cd random-password-generator
     ```
 3. Install Dependencies:
     ```bash
