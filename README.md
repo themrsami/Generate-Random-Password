@@ -12,7 +12,7 @@ A simple and customizable password generator built with React, ShadCN UI compone
 
 ## Live Preview
 
-Check out the live demo of the Password Generator [here](https://random-password-generator-xi-two.vercel.app/).
+Check out the live demo of the Password Generator [here](https://generaterandompass.vercel.app/).
 
 ## Screenshots
 
