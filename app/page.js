@@ -11,10 +11,12 @@ import { useToast } from '@/components/ui/use-toast';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { FaGithub, FaInstagram, FaCopy, FaSyncAlt } from 'react-icons/fa';
 import Link from 'next/link';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const PasswordGenerator = () => {
-  const [password, setPassword] = useState('');
+  const [passwords, setPasswords] = useState(['']);
   const [length, setLength] = useState(12);
+  const [quantity, setQuantity] = useState(1);  // New state for quantity
   const [options, setOptions] = useState({
     uppercase: true,
     lowercase: true,
@@ -25,10 +27,10 @@ const PasswordGenerator = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    generatePassword(options);
-  }, [length]);
+    generatePasswords(options);
+  }, [length, quantity]);  // Regenerate passwords if quantity or length changes
 
-  const generatePassword = (opts = options) => {
+  const generatePasswords = (opts = options) => {
     if (!opts.uppercase && !opts.lowercase && !opts.numbers && !opts.symbols) {
       toast({
         title: <span style={{ color: 'red', fontWeight: 'bold', fontSize: '1rem' }}>Error</span>,
@@ -37,17 +39,36 @@ const PasswordGenerator = () => {
       return;
     }
 
-    const newPassword = generate({
-      length,
-      numbers: opts.numbers,
-      symbols: opts.symbols,
-      uppercase: opts.uppercase,
-      lowercase: opts.lowercase,
-    });
-    setPassword(newPassword);
+    const newPasswords = Array.from({ length: quantity }, () =>
+      generate({
+        length,
+        numbers: opts.numbers,
+        symbols: opts.symbols,
+        uppercase: opts.uppercase,
+        lowercase: opts.lowercase,
+      })
+    );
+    setPasswords(newPasswords);
     toast({
       title: <span style={{ color: 'green', fontWeight: 'bold', fontSize: '1rem' }}>Success</span>,
-      description: 'Password generated successfully!',
+      description: 'Passwords generated successfully!',
+    });
+  };
+
+  const generateSinglePassword = (index) => {
+    const newPassword = generate({
+      length,
+      numbers: options.numbers,
+      symbols: options.symbols,
+      uppercase: options.uppercase,
+      lowercase: options.lowercase,
+    });
+    const updatedPasswords = [...passwords];
+    updatedPasswords[index] = newPassword;
+    setPasswords(updatedPasswords);
+    toast({
+      title: <span style={{ color: 'green', fontWeight: 'bold', fontSize: '1rem' }}>Success</span>,
+      description: `Password at index ${index + 1} regenerated!`,
     });
   };
 
@@ -64,8 +85,8 @@ const PasswordGenerator = () => {
       description: `${option.charAt(0).toUpperCase() + option.slice(1)} ${action} password.`,
     });
 
-    // Regenerate password with updated options
-    generatePassword(updatedOptions);
+    // Regenerate passwords with updated options
+    generatePasswords(updatedOptions);
   };
 
   const handleLengthChange = (value) => {
@@ -76,11 +97,28 @@ const PasswordGenerator = () => {
     });
   };
 
-  const handleCopyPassword = () => {
+  const handleCopyPassword = (password) => {
     navigator.clipboard.writeText(password);
     toast({
       title: <span style={{ color: 'green', fontWeight: 'bold', fontSize: '1rem' }}>Copied</span>,
       description: 'Password copied to clipboard!',
+    });
+  };
+
+  const handleCopyAllPasswords = () => {
+    const allPasswords = passwords.join('\n');
+    navigator.clipboard.writeText(allPasswords);
+    toast({
+      title: <span style={{ color: 'green', fontWeight: 'bold', fontSize: '1rem' }}>Copied</span>,
+      description: 'All passwords copied to clipboard!',
+    });
+  };
+
+  const handleQuantityChange = (value) => {
+    setQuantity(value);
+    toast({
+      title: <span style={{ color: 'orange', fontWeight: 'bold', fontSize: '1rem' }}>Info</span>,
+      description: `Password quantity changed to ${value}!`,
     });
   };
 
@@ -104,6 +142,17 @@ const PasswordGenerator = () => {
               value={length}
               onChange={(e) => handleLengthChange(Number(e.target.value))}
               className="mt-4"
+            />
+          </div>
+          <div className="mb-4">
+            <Label htmlFor="quantity">Quantity: {quantity}</Label>
+            <Input
+              type="number"
+              id="quantity"
+              min={1}
+              value={quantity}
+              onChange={(e) => handleQuantityChange(Number(e.target.value))}
+              className="mt-2"
             />
           </div>
           <div className="mb-4">
@@ -141,38 +190,45 @@ const PasswordGenerator = () => {
             </div>
           </div>
           <div className="flex flex-wrap space-x-2">
-            <Button onClick={() => generatePassword(options)}>
+            <Button onClick={() => generatePasswords(options)}>
               Generate
             </Button>
-            <Button onClick={handleCopyPassword}>
-              Copy
+            <Button onClick={handleCopyAllPasswords}>
+              Copy All
             </Button>
           </div>
-          <div className="relative mt-4 flex items-center">
-            <Input className="w-full p-2 border rounded" type="text" readOnly value={password} />
-            <div className="absolute right-0 flex items-center space-x-2 mr-2">
-              <Tooltip>
-                <TooltipTrigger>
-                  <FaCopy
-                    size={20}
-                    className="cursor-pointer"
-                    onClick={handleCopyPassword}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>Copy Password</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <FaSyncAlt
-                    size={20}
-                    className="cursor-pointer"
-                    onClick={() => generatePassword(options)}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>Generate New Password</TooltipContent>
-              </Tooltip>
+
+          {/* Render multiple passwords if quantity > 1 */}
+          <ScrollArea className={`mt-4 ${quantity > 5 ? 'h-[200px]' : ''} w-full`}>
+          {passwords.map((password, index) => (
+            <div key={index} className="relative mt-4 flex items-center">
+              <Input className="w-full p-2 border rounded" type="text" readOnly value={password} />
+              <div className="absolute right-0 flex items-center space-x-2 mr-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <FaCopy
+                      size={20}
+                      className="cursor-pointer"
+                      onClick={() => handleCopyPassword(password)}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Copy Password</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <FaSyncAlt
+                      size={20}
+                      className="cursor-pointer"
+                      onClick={() => generateSinglePassword(index)}  // Update only this password
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Generate New Password</TooltipContent>
+                </Tooltip>
+              </div>
             </div>
-          </div>
+          ))}
+          </ScrollArea>
+
           <div className="flex flex-wrap gap-4 justify-center mt-2">
             <Link href="https://www.github.com/themrsami" target='_blank'>
               <FaGithub size={30}/>
