@@ -178,18 +178,18 @@ const JSONFormatter = () => {
   }, []);
 
   // Sample JSON templates
-  const sampleTemplates = {
+  const sampleTemplates = useMemo(() => ({
     simple: '{"name": "John Doe", "age": 30, "city": "New York"}',
     array: '["apple", "banana", "cherry", "date"]',
     nested: '{"user": {"name": "Jane", "details": {"age": 25, "hobbies": ["reading", "gaming"]}}}',
     complex: '{"users": [{"id": 1, "name": "Alice", "active": true}, {"id": 2, "name": "Bob", "active": false}], "total": 2}'
-  };
+  }), []);
 
   const loadSample = useCallback((template) => {
     const sample = sampleTemplates[template];
     setInputJSON(sample);
     processJSON(sample, parseInt(indentSize));
-  }, [processJSON, indentSize]);
+  }, [processJSON, indentSize, sampleTemplates]);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">

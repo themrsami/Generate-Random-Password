@@ -524,8 +524,34 @@ const PasswordGenerator = () => {
 
   // Initialize with some passwords
   useEffect(() => {
-    generatePasswords();
-  }, []);
+    const initializePasswords = async () => {
+      if (!options.uppercase && !options.lowercase && !options.numbers && !options.symbols) {
+        return;
+      }
+      setIsGenerating(true);
+      setGenerationProgress(0);
+      
+      try {
+        const newPasswords = [];
+        const defaultQuantity = 5;
+        
+        for (let i = 0; i < defaultQuantity; i++) {
+          const password = generateCustomPassword(length, options);
+          newPasswords.push(password);
+          setGenerationProgress(((i + 1) / defaultQuantity) * 100);
+        }
+        
+        setPasswords(newPasswords);
+      } catch (error) {
+        // Handle error silently for initial load
+      } finally {
+        setIsGenerating(false);
+        setGenerationProgress(0);
+      }
+    };
+    
+    initializePasswords();
+  }, []); // Only run once on mount
 
   return (
     <div className="w-full max-w-full mx-auto space-y-6 p-4">

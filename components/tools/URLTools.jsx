@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -483,11 +484,15 @@ const URLTools = () => {
                     <RefreshCw className="w-8 h-8 animate-spin text-gray-400" />
                   </div>
                 ) : qrCodeDataUrl ? (
-                  <img 
-                    src={qrCodeDataUrl} 
-                    alt="QR Code" 
-                    className="border rounded-lg shadow-sm"
-                  />
+                  <div className="relative">
+                    <Image 
+                      src={qrCodeDataUrl} 
+                      alt="QR Code"
+                      width={256}
+                      height={256}
+                      className="border rounded-lg shadow-sm"
+                    />
+                  </div>
                 ) : (
                   <div className="flex items-center justify-center h-64 w-64 bg-gray-100 rounded-lg">
                     <QrCode className="w-16 h-16 text-gray-400" />

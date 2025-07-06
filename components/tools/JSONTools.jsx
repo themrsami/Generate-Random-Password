@@ -80,6 +80,20 @@ const JSONTools = () => {
     }
   }, []);
 
+  // Sort object keys recursively
+  const sortObjectKeys = useCallback((obj) => {
+    if (Array.isArray(obj)) {
+      return obj.map(sortObjectKeys);
+    } else if (obj !== null && typeof obj === 'object') {
+      const sorted = {};
+      Object.keys(obj).sort().forEach(key => {
+        sorted[key] = sortObjectKeys(obj[key]);
+      });
+      return sorted;
+    }
+    return obj;
+  }, []);
+
   // Format JSON
   const formatJSON = useCallback(() => {
     const parsed = validateJSON(inputJSON);
@@ -100,7 +114,7 @@ const JSONTools = () => {
         });
       }
     }
-  }, [inputJSON, indentSize, sortKeys, validateJSON, toast]);
+  }, [inputJSON, indentSize, sortKeys, validateJSON, toast, sortObjectKeys]);
 
   // Minify JSON
   const minifyJSON = useCallback(() => {
@@ -118,20 +132,6 @@ const JSONTools = () => {
       }
     }
   }, [inputJSON, validateJSON, toast]);
-
-  // Sort object keys recursively
-  const sortObjectKeys = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.map(sortObjectKeys);
-    } else if (obj !== null && typeof obj === 'object') {
-      const sorted = {};
-      Object.keys(obj).sort().forEach(key => {
-        sorted[key] = sortObjectKeys(obj[key]);
-      });
-      return sorted;
-    }
-    return obj;
-  };
 
   // Advanced JSON manipulation functions
   const removeKeyFromObject = (obj, keyToRemove) => {

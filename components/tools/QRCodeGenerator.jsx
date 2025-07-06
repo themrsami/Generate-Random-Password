@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import QRCode from 'qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -326,12 +327,16 @@ const QRCodeGenerator = () => {
               <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg min-h-[400px]">
                 {qrCodeData ? (
                   <div className="text-center space-y-4">
-                    <img 
-                      src={qrCodeData} 
-                      alt="Generated QR Code" 
-                      className="mx-auto shadow-lg rounded-lg border"
-                      style={{ maxWidth: '100%', maxHeight: '350px' }}
-                    />
+                    <div className="relative mx-auto shadow-lg rounded-lg border" style={{ maxWidth: '350px', maxHeight: '350px' }}>
+                      <Image 
+                        src={qrCodeData} 
+                        alt="Generated QR Code"
+                        width={size}
+                        height={size}
+                        className="rounded-lg"
+                        style={{ maxWidth: '100%', height: 'auto' }}
+                      />
+                    </div>
                     <div className="text-sm text-gray-600">
                       <p>Size: {size}x{size}px</p>
                       <p>Content: {text.length > 50 ? text.substring(0, 50) + '...' : text}</p>
@@ -340,7 +345,7 @@ const QRCodeGenerator = () => {
                 ) : (
                   <div className="text-center text-gray-500">
                     <QrCode className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg">Enter content and click "Generate QR Code"</p>
+                    <p className="text-lg">Enter content and click &quot;Generate QR Code&quot;</p>
                     <p className="text-sm">Your QR code will appear here</p>
                   </div>
                 )}
