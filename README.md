@@ -65,11 +65,7 @@ A comprehensive web application featuring multiple powerful tools for developers
 
 ## 🌐 Live Preview
 
-Check out the live demo of the Multi-Tool App [here](https://generaterandompass.vercel.app/).
-
-## 📸 Screenshots
-
-![Multi-Tool Interface](https://github.com/themrsami/random-password-generator/assets/91170768/cd5a9647-5b87-480f-97fc-0acb4c9b1ea5)
+Check out the live demo of the Multi-Tool App [here](https://multi-tool-web-app.vercel.app/).
 
 
 ## 🚀 Getting Started
@@ -85,11 +81,11 @@ Follow these instructions to set up and run the Multi-Tool Application on your l
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/themrsami/Generate-Random-Password.git
+   git clone https://github.com/themrsami/Multi-Tool-Web-App.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd Generate-Random-Password
+    cd Multi-Tool-Web-App
     ```
 3. Install Dependencies:
     ```bash
